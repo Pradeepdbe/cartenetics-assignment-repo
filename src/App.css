@@ -7,3 +7,10 @@
 .colorGreen{
    color: #e8960f;
 }
+.colorRed {
+  color: red;
+}
+.bgColorGry{
+  background-color: #d6e2eb;
+  padding-bottom: 20px;
+}

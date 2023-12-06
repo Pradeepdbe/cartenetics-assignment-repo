@@ -27,6 +27,8 @@ function App() {
   const [sourceValueError, setSourceValueError] = useState(false);
   const [targetValueError, setTargetValueError] = useState(false);
   const [amountError, setAmountError] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   
   const [apiResponse, setApiResponse] = useState<responsType|any>();
 
@@ -46,16 +48,22 @@ function App() {
   };
 
   const handleConvertion = () => {
+    setError(false);
+    setErrorMsg('');
     if(amount && targetValue && sourceValue){      
         setAmountError(false);
         setTargetValueError(false);
         setSourceValueError(false);
-        const api = "https://mocki.io/v1/74152a5b-911c-48bf-9818-beff1df80baa";
+        const api = "http://localhost:4500/api/getUserList";
         axios.get(`${api}${"?sourceCurrency="}${sourceValue}${"&targetCurrency="}${targetValue}${"&amount="}${amount}`)
         .then((response) => {
           setApiResponse(response.data)
         })
-        .catch((err)=> console.log(err)); 
+        .catch((err)=> {
+          setApiResponse('');
+          setError(true)
+          setErrorMsg(err?.response?.data?.error);
+        }); 
     } else {
       if(!amount){
         setAmountError(true)
@@ -72,7 +80,7 @@ function App() {
 
   return (
     <div>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1 }} className="bgColorGry" >
         <Grid container spacing={2}>
             <Grid item xs={12} md={12} className='textAlignCenter' >
               <h2>Currency Conversion App</h2>
@@ -148,6 +156,10 @@ function App() {
             <Grid item xs={12} md={12} className='textAlignCenter' >              
                <label><b>Exchange Rate: <span className='colorGreen'>{apiResponse?.exchangeRate}</span></b></label>               
             </Grid>
+            <Grid item xs={12} md={12} className='textAlignCenter' >
+               { error && <h2 className='colorRed' >{errorMsg}</h2>  }  
+            </Grid>
+            
         </Grid>
      </Box>
     </div>
